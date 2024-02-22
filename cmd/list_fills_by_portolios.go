@@ -54,13 +54,7 @@ var listFillsCmd = &cobra.Command{
 			TimeFrom:      timeFrom,
 		}
 
-		if request.RefDatetime != "" || request.ResultLimit != utils.ZeroInt || request.ResultOffset != utils.ZeroInt {
-			request.Pagination = &intx.PaginationParams{
-				RefDatetime:  request.RefDatetime,
-				ResultLimit:  request.ResultLimit,
-				ResultOffset: request.ResultOffset,
-			}
-		}
+		request.Pagination = utils.CreatePaginationParams(request.RefDatetime, request.ResultLimit, request.ResultOffset)
 
 		response, err := client.ListFillsByPortfolios(ctx, request)
 		if err != nil {

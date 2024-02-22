@@ -53,13 +53,7 @@ var getPortfolioFillsCmd = &cobra.Command{
 			TimeFrom:      utils.GetFlagStringValue(cmd, utils.TimeFromFlag),
 		}
 
-		if request.RefDatetime != "" || request.ResultLimit != utils.ZeroInt || request.ResultOffset != utils.ZeroInt {
-			request.Pagination = &intx.PaginationParams{
-				RefDatetime:  request.RefDatetime,
-				ResultLimit:  request.ResultLimit,
-				ResultOffset: request.ResultOffset,
-			}
-		}
+		request.Pagination = utils.CreatePaginationParams(request.RefDatetime, request.ResultLimit, request.ResultOffset)
 
 		response, err := client.GetPortfolioFills(ctx, request)
 		if err != nil {
@@ -80,13 +74,13 @@ var getPortfolioFillsCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(getPortfolioFillsCmd)
 
-	getPortfolioFillsCmd.Flags().StringP("portfolio-id", "p", "", "Portfolio ID (required). Uses environment variable if blank")
-	getPortfolioFillsCmd.Flags().String("order-id", "", "Order ID")
-	getPortfolioFillsCmd.Flags().String("client-order-id", "", "Client Order ID")
-	getPortfolioFillsCmd.Flags().String("ref-datetime", "", "Reference datetime for the request")
-	getPortfolioFillsCmd.Flags().Int("result-limit", utils.ZeroInt, "Result limit")
-	getPortfolioFillsCmd.Flags().Int("result-offset", utils.ZeroInt, "Result offset")
-	getPortfolioFillsCmd.Flags().String("time-from", "", "Time from which to get fills")
+	getPortfolioFillsCmd.Flags().StringP(utils.PortfolioIdFlag, "p", "", "Portfolio ID (required). Uses environment variable if blank")
+	getPortfolioFillsCmd.Flags().String(utils.OrderIdFlag, "", "Order ID")
+	getPortfolioFillsCmd.Flags().String(utils.ClientOrderIdFlag, "", "Client Order ID")
+	getPortfolioFillsCmd.Flags().String(utils.RefDatetimeFlag, "", "Reference datetime for the request")
+	getPortfolioFillsCmd.Flags().Int(utils.ResultLimitFlag, utils.ZeroInt, "Result limit")
+	getPortfolioFillsCmd.Flags().Int(utils.ResultOffsetFlag, utils.ZeroInt, "Result offset")
+	getPortfolioFillsCmd.Flags().String(utils.TimeFromFlag, "", "Time from which to get fills")
 	getPortfolioFillsCmd.Flags().StringP(utils.FormatFlag, "z", "false", "Pass true for formatted JSON. Default is false")
 
 	getPortfolioFillsCmd.MarkFlagRequired("portfolio-id")

@@ -67,55 +67,6 @@ func GetFlagBoolValue(cmd *cobra.Command, flagName string) *bool {
 	return &value
 }
 
-func GetPaginationParams(cmd *cobra.Command) (*intx.PaginationParams, error) {
-	refDatetime, err := cmd.Flags().GetString("ref-datetime")
-	if err != nil {
-		return nil, fmt.Errorf("cannot parse ref datetime: %w", err)
-	}
-
-	limitStr, err := cmd.Flags().GetString("limit")
-	if err != nil {
-		return nil, fmt.Errorf("cannot parse limit: %w", err)
-	}
-	resultLimit, err := strconv.Atoi(limitStr)
-	if err != nil {
-		return nil, fmt.Errorf("invalid limit value: %w", err)
-	}
-
-	offsetStr, err := cmd.Flags().GetString("offset")
-	if err != nil {
-		return nil, fmt.Errorf("cannot parse offset: %w", err)
-	}
-	resultOffset, err := strconv.Atoi(offsetStr)
-	if err != nil {
-		return nil, fmt.Errorf("invalid offset value: %w", err)
-	}
-
-	return &intx.PaginationParams{
-		RefDatetime:  refDatetime,
-		ResultLimit:  resultLimit,
-		ResultOffset: resultOffset,
-	}, nil
-}
-
-func ParseDateRange(startStr, endStr string) (time.Time, time.Time, error) {
-	var start, end time.Time
-	var err error
-	if startStr != "" {
-		start, err = time.Parse(time.RFC3339, startStr)
-		if err != nil {
-			return start, end, fmt.Errorf("invalid start time: %w", err)
-		}
-	}
-	if endStr != "" {
-		end, err = time.Parse(time.RFC3339, endStr)
-		if err != nil {
-			return start, end, fmt.Errorf("invalid end time: %w", err)
-		}
-	}
-	return start, end, nil
-}
-
 func MarshalJson(data interface{}, format bool) ([]byte, error) {
 	if format {
 		return json.MarshalIndent(data, "", JsonIndent)
@@ -184,4 +135,15 @@ func GetFlagIntValue(cmd *cobra.Command, flagName string) (int, error) {
 		return 0, err
 	}
 	return value, nil
+}
+
+func CreatePaginationParams(refDatetime string, resultLimit, resultOffset int) *intx.PaginationParams {
+	if refDatetime != "" || resultLimit != ZeroInt || resultOffset != ZeroInt {
+		return &intx.PaginationParams{
+			RefDatetime:  refDatetime,
+			ResultLimit:  resultLimit,
+			ResultOffset: resultOffset,
+		}
+	}
+	return nil
 }
