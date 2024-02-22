@@ -3,7 +3,7 @@ module github.com/jc-cb/intx-cli-dev
 go 1.21.4
 
 require (
-	github.com/coinbase-samples/intx-sdk-go v0.1.0
+	github.com/coinbase-samples/intx-sdk-go v0.1.1
 	github.com/google/uuid v1.6.0
 	github.com/spf13/cobra v1.8.0
 )

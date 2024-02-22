@@ -23,32 +23,25 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var getPortfolioCmd = &cobra.Command{
-	Use:   "get-portfolio",
-	Short: "Get portfolio details.",
+var getTransferCmd = &cobra.Command{
+	Use:   "get-transfer",
+	Short: "Get transfer.",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := utils.GetClientFromEnv()
 		if err != nil {
 			return fmt.Errorf("failed to initialize client: %w", err)
 		}
 
-		portfolioId, err := utils.GetPortfolioId(cmd, client)
-		if err != nil {
-			return err
-		}
-
-		fmt.Println(portfolioId)
-
 		ctx, cancel := utils.GetContextWithTimeout()
 		defer cancel()
 
-		request := &intx.GetPortfolioRequest{
-			PortfolioId: portfolioId,
+		request := &intx.GetTransferRequest{
+			TransferUuid: utils.GetFlagStringValue(cmd, utils.TransferIdFlag),
 		}
 
-		response, err := client.GetPortfolio(ctx, request)
+		response, err := client.GetTransfer(ctx, request)
 		if err != nil {
-			return fmt.Errorf("cannot get portfolio: %w", err)
+			return fmt.Errorf("cannot get transfer: %w", err)
 		}
 
 		jsonResponse, err := utils.FormatResponseAsJson(cmd, response)
@@ -63,8 +56,8 @@ var getPortfolioCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(getPortfolioCmd)
+	rootCmd.AddCommand(getTransferCmd)
 
-	getPortfolioCmd.Flags().StringP(utils.PortfolioIdFlag, "", "", "Portfolio ID. Uses environment variable if blank")
-	getPortfolioCmd.Flags().StringP(utils.FormatFlag, "z", "false", "Pass true for formatted JSON. Default is false")
+	getTransferCmd.Flags().StringP(utils.TransferIdFlag, "i", "", "ID of the Transfer (Required)")
+	getTransferCmd.Flags().StringP(utils.FormatFlag, "z", "false", "Pass true for formatted JSON. Default is false")
 }

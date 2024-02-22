@@ -23,32 +23,23 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var getPortfolioCmd = &cobra.Command{
-	Use:   "get-portfolio",
-	Short: "Get portfolio details.",
+var listAssetsCmd = &cobra.Command{
+	Use:   "list-assets",
+	Short: "List assets.",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := utils.GetClientFromEnv()
 		if err != nil {
-			return fmt.Errorf("failed to initialize client: %w", err)
+			return fmt.Errorf("cannot get client from environment: %w", err)
 		}
-
-		portfolioId, err := utils.GetPortfolioId(cmd, client)
-		if err != nil {
-			return err
-		}
-
-		fmt.Println(portfolioId)
 
 		ctx, cancel := utils.GetContextWithTimeout()
 		defer cancel()
 
-		request := &intx.GetPortfolioRequest{
-			PortfolioId: portfolioId,
-		}
+		request := &intx.ListAssetsRequest{}
 
-		response, err := client.GetPortfolio(ctx, request)
+		response, err := client.ListAssets(ctx, request)
 		if err != nil {
-			return fmt.Errorf("cannot get portfolio: %w", err)
+			return fmt.Errorf("cannot list assets: %w", err)
 		}
 
 		jsonResponse, err := utils.FormatResponseAsJson(cmd, response)
@@ -63,8 +54,7 @@ var getPortfolioCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(getPortfolioCmd)
+	rootCmd.AddCommand(listAssetsCmd)
 
-	getPortfolioCmd.Flags().StringP(utils.PortfolioIdFlag, "", "", "Portfolio ID. Uses environment variable if blank")
-	getPortfolioCmd.Flags().StringP(utils.FormatFlag, "z", "false", "Pass true for formatted JSON. Default is false")
+	listAssetsCmd.Flags().StringP(utils.FormatFlag, "z", "false", "Pass true for formatted JSON. Default is false")
 }

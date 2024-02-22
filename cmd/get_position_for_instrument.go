@@ -24,8 +24,8 @@ import (
 )
 
 var getPositionForInstrumentCmd = &cobra.Command{
-	Use:   "get-portfolio-summary",
-	Short: "Get portfolio summary.",
+	Use:   "get-position-for-instrument",
+	Short: "Get position for instrument.",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := utils.GetClientFromEnv()
 		if err != nil {

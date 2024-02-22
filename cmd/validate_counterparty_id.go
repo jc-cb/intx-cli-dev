@@ -1,5 +1,5 @@
 /**
- * Copyright 2024-present Coinbase Global, Inc.
+ * Copyright 2023-present Coinbase Global, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,32 +23,25 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var getPortfolioCmd = &cobra.Command{
-	Use:   "get-portfolio",
-	Short: "Get portfolio details.",
+var validateCounterPartyIdCmd = &cobra.Command{
+	Use:   "validate-counterparty-id",
+	Short: "Validate a counterparty ID.",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := utils.GetClientFromEnv()
 		if err != nil {
 			return fmt.Errorf("failed to initialize client: %w", err)
 		}
 
-		portfolioId, err := utils.GetPortfolioId(cmd, client)
-		if err != nil {
-			return err
-		}
-
-		fmt.Println(portfolioId)
-
 		ctx, cancel := utils.GetContextWithTimeout()
 		defer cancel()
 
-		request := &intx.GetPortfolioRequest{
-			PortfolioId: portfolioId,
+		request := &intx.ValidateCounterpartyIdRequest{
+			CounterpartyId: utils.GetFlagStringValue(cmd, utils.CounterpartyIdFlag),
 		}
 
-		response, err := client.GetPortfolio(ctx, request)
+		response, err := client.ValidateCounterpartyId(ctx, request)
 		if err != nil {
-			return fmt.Errorf("cannot get portfolio: %w", err)
+			return fmt.Errorf("cannot validate counterparty ID: %w", err)
 		}
 
 		jsonResponse, err := utils.FormatResponseAsJson(cmd, response)
@@ -57,14 +50,15 @@ var getPortfolioCmd = &cobra.Command{
 		}
 
 		fmt.Println(jsonResponse)
-
 		return nil
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(getPortfolioCmd)
+	rootCmd.AddCommand(validateCounterPartyIdCmd)
 
-	getPortfolioCmd.Flags().StringP(utils.PortfolioIdFlag, "", "", "Portfolio ID. Uses environment variable if blank")
-	getPortfolioCmd.Flags().StringP(utils.FormatFlag, "z", "false", "Pass true for formatted JSON. Default is false")
+	validateCounterPartyIdCmd.Flags().StringP(utils.CounterpartyIdFlag, "", "", "Counterparty ID ot be validated (Required)")
+	validateCounterPartyIdCmd.Flags().StringP(utils.FormatFlag, "z", "false", "Pass true for formatted JSON. Default is false")
+
+	validateCounterPartyIdCmd.MarkFlagRequired(utils.CounterpartyIdFlag)
 }

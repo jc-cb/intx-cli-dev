@@ -17,12 +17,12 @@
 package utils
 
 const (
-	OrderIdFlag       = "order-id"
-	ProductIdFlag     = "product-id"
-	GenericIdFlag     = "id"
-	TransactionIdFlag = "transaction-id"
-	WalletIdFlag      = "wallet-id"
-	InstrumentIdFlag  = "instrument-id"
+	OrderIdFlag      = "order-id"
+	ProductIdFlag    = "product-id"
+	GenericIdFlag    = "id"
+	TransferIdFlag   = "transfer-id"
+	WalletIdFlag     = "wallet-id"
+	InstrumentIdFlag = "instrument-id"
 
 	AssetIdFlag      = "asset-id"
 	NetworkArnIdFlag = "network-arn-id"
@@ -49,6 +49,8 @@ const (
 	ResultLimitFlag  = "result-limit"
 	ResultOffsetFlag = "result-offset"
 	TimeFromFlag     = "time-from"
+	TimeToFlag       = "time-to"
+	StatusFlag       = "status"
 
 	FromFlag = "from"
 	ToFlag   = "to"
@@ -70,6 +72,8 @@ const (
 	RemainderDestPortfolioIdFlag = "remainder-destination-portfolio-id"
 	OrderIdsFlag                 = "order-ids"
 	AllocationLegsFlag           = "allocation-legs"
+
+	MarginOverrideFlag = "margin-override"
 
 	PaymentMethodIdFlag   = "payment-method-id"
 	BlockchainAddressFlag = "blockchain-address"
@@ -112,9 +116,10 @@ const (
 	FormatFlag = "format"
 	ToggleFlag = "toggle"
 
-	PortfolioIdFlag    = "portfolio-id"
+	PortfolioIdFlag    = "portfolioId"
 	IdempotencyKeyFlag = "idempotency-key"
 	ClientOrderIdFlag  = "client-order-id"
+	EventTypeFlag      = "event-type"
 
 	LimitDefault         = "100"
 	SortDirectionDefault = "DESC"

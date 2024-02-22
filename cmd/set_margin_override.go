@@ -23,9 +23,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var getPortfolioCmd = &cobra.Command{
-	Use:   "get-portfolio",
-	Short: "Get portfolio details.",
+var getMarginOverrideCmd = &cobra.Command{
+	Use:   "set-margin-override",
+	Short: "Set margin override for portfolio.",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := utils.GetClientFromEnv()
 		if err != nil {
@@ -37,18 +37,17 @@ var getPortfolioCmd = &cobra.Command{
 			return err
 		}
 
-		fmt.Println(portfolioId)
-
 		ctx, cancel := utils.GetContextWithTimeout()
 		defer cancel()
 
-		request := &intx.GetPortfolioRequest{
-			PortfolioId: portfolioId,
+		request := &intx.SetMarginOverrideRequest{
+			PortfolioId:    portfolioId,
+			MarginOverride: utils.GetFlagStringValue(cmd, utils.MarginOverrideFlag),
 		}
 
-		response, err := client.GetPortfolio(ctx, request)
+		response, err := client.SetMarginOverride(ctx, request)
 		if err != nil {
-			return fmt.Errorf("cannot get portfolio: %w", err)
+			return fmt.Errorf("cannot set margin override: %w", err)
 		}
 
 		jsonResponse, err := utils.FormatResponseAsJson(cmd, response)
@@ -63,8 +62,9 @@ var getPortfolioCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(getPortfolioCmd)
+	rootCmd.AddCommand(getMarginOverrideCmd)
 
-	getPortfolioCmd.Flags().StringP(utils.PortfolioIdFlag, "", "", "Portfolio ID. Uses environment variable if blank")
-	getPortfolioCmd.Flags().StringP(utils.FormatFlag, "z", "false", "Pass true for formatted JSON. Default is false")
+	getMarginOverrideCmd.Flags().StringP(utils.PortfolioIdFlag, "i", "", "Portfolio ID. Uses environment variable if blank")
+	getMarginOverrideCmd.Flags().StringP(utils.MarginOverrideFlag, "m", "", "Margin Override string")
+	getMarginOverrideCmd.Flags().StringP(utils.FormatFlag, "z", "false", "Pass true for formatted JSON. Default is false")
 }

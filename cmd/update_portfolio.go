@@ -23,9 +23,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var getPortfolioCmd = &cobra.Command{
-	Use:   "get-portfolio",
-	Short: "Get portfolio details.",
+var updatePortfolioCmd = &cobra.Command{
+	Use:   "update-portfolio",
+	Short: "update a portfolio name.",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := utils.GetClientFromEnv()
 		if err != nil {
@@ -37,18 +37,17 @@ var getPortfolioCmd = &cobra.Command{
 			return err
 		}
 
-		fmt.Println(portfolioId)
-
 		ctx, cancel := utils.GetContextWithTimeout()
 		defer cancel()
 
-		request := &intx.GetPortfolioRequest{
+		request := &intx.UpdatePortfolioRequest{
+			Name:        utils.GetFlagStringValue(cmd, utils.NameFlag),
 			PortfolioId: portfolioId,
 		}
 
-		response, err := client.GetPortfolio(ctx, request)
+		response, err := client.UpdatePortfolio(ctx, request)
 		if err != nil {
-			return fmt.Errorf("cannot get portfolio: %w", err)
+			return fmt.Errorf("cannot update portfolio: %w", err)
 		}
 
 		jsonResponse, err := utils.FormatResponseAsJson(cmd, response)
@@ -63,8 +62,13 @@ var getPortfolioCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(getPortfolioCmd)
+	rootCmd.AddCommand(updatePortfolioCmd)
 
-	getPortfolioCmd.Flags().StringP(utils.PortfolioIdFlag, "", "", "Portfolio ID. Uses environment variable if blank")
-	getPortfolioCmd.Flags().StringP(utils.FormatFlag, "z", "false", "Pass true for formatted JSON. Default is false")
+	updatePortfolioCmd.Flags().StringP(utils.PortfolioIdFlag, "", "", "Portfolio ID. Uses environment variable if blank (Required)")
+	updatePortfolioCmd.Flags().StringP(utils.NameFlag, "n", "", "New name of the portfolio (Required)")
+	updatePortfolioCmd.Flags().StringP(utils.FormatFlag, "z", "false", "Pass true for formatted JSON. Default is false")
+
+	updatePortfolioCmd.MarkFlagRequired(utils.PortfolioIdFlag)
+	updatePortfolioCmd.MarkFlagRequired(utils.NameFlag)
+
 }
